@@ -6,38 +6,80 @@
 /*   By: tguerran <tguerran@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 15:16:48 by tguerran          #+#    #+#             */
-/*   Updated: 2024/02/07 16:19:57 by tguerran         ###   ########.fr       */
+/*   Updated: 2024/03/13 16:17:51 by tguerran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
-
-
-static int  ft_isspace(const char c)
-{
-    return (c == ' ' || c == '\t' || c == '\v'
-        || c == '\n' || c == '\r' || c == '\f');
-}
  
-void    encode(int pid, unsigned char *encode)
+void	signal_error(void)
 {
-    static const int signals[] = {SIGUSR2, SIGUSR1};
-    while (*encode)
-    {
-        unsigned int i = 1 << 7;
-        while (i)
-        {
-            kill(pid, signals[*encode & i ? 1 : 0]);
-            i >>= 1;
-            usleep(200);
-        }
-        encode++;
-    }
+	printf("client: unexpected error.");
+	exit(EXIT_FAILURE);
 }
- 
-int     main(int ac, char **av)
+
+void	char_to_bin(unsigned char c, int pid)
 {
-    if (ac == 3)
-        encode(ft_atoi(av[1]), (unsigned char *)av[2]);
-    return (0);
+	int	bit;
+
+	bit = 0;
+	while (bit < 8)
+	{
+		if (c & 128)
+		{
+			if (kill(pid, SIGUSR2) == -1)
+				signal_error();
+		}
+		else
+		{
+			if (kill(pid, SIGUSR1) == -1)
+				signal_error();
+		}
+		c <<= 1;
+		bit++;
+		pause();
+	}
+}
+
+void	sent_text(char *str, int pid)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+		char_to_bin(str[i++], pid);
+	char_to_bin('\0', pid);
+}
+
+void	recieved(int sig)
+{
+	static int	sent;
+
+	if (sig == SIGUSR1)
+	{
+		printf("%d signal sent successfully! \n", ++sent);
+		exit(0);
+	}
+	if (sig == SIGUSR2)
+		++sent;
+}
+
+int	main(int ac, char **av)
+{
+	int	server_pid;
+	int	client_pid;
+
+	client_pid = getpid();
+	if (ac == 3)
+	{
+		printf("client pid: %d\n", client_pid);
+		signal(SIGUSR1, recieved);
+		signal(SIGUSR2, recieved);
+		server_pid = ft_atoi(av[1]);
+		printf("Text currently sending..\n");
+		sent_text(av[2], server_pid);
+	}
+	else
+		printf("usage: ./client <server_pid> <text to send>\n");
+	return (0);
 }
