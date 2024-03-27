@@ -6,7 +6,7 @@
 /*   By: tguerran <tguerran@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 15:16:45 by tguerran          #+#    #+#             */
-/*   Updated: 2024/03/18 16:48:22 by tguerran         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:36:58 by tguerran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,43 @@
 
 void extended_action(char *c, int *received, int *client_pid, int *bit)
 {
-	ft_printf("%c",*c);
+	static char *phrase = NULL;
+    static int phrase_len = 0;
+    static int phrase_capacity = 0;
+	if (phrase == NULL)
+	{
+        phrase_capacity = 10; 
+        phrase = (char*)malloc(phrase_capacity * sizeof(char));
+        if (phrase == NULL)
+    		exit (1);
+        phrase_len = 0;
+    }
+    if (phrase_len + 1 >= phrase_capacity)
+	{
+        int new_capacity = phrase_capacity * 2;
+        char *new_phrase = (char*)malloc(new_capacity * sizeof(char));
+        if (new_phrase == NULL)
+            exit (1);
+
+	int i;
+	i = 0;
+        while (i < phrase_len)
+		{
+            new_phrase[i] = phrase[i];
+			i++;
+        }
+        free(phrase);
+        phrase = new_phrase;
+        phrase_capacity = new_capacity;
+	}
+	phrase[phrase_len++] = *c;
+	// ft_printf("%c",*c);
 	if(*c == '\0')
 	{
+		ft_printf("%s \n",phrase);
+		free(phrase);
+        phrase = NULL;
+        phrase_len = 0;
 		ft_printf(" %d signal received from client PID; %d \n",*received, *client_pid);
 		*received = 0;
 		*c = 0;
@@ -69,7 +103,6 @@ int	main(void)
 	{
 		sigaction(SIGUSR1, &s_sigaction, 0);
 		sigaction(SIGUSR2, &s_sigaction, 0);
-		pause();
 	}
 	return (0);
 }

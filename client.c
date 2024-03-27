@@ -6,12 +6,12 @@
 /*   By: tguerran <tguerran@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 15:16:48 by tguerran          #+#    #+#             */
-/*   Updated: 2024/03/18 15:40:21 by tguerran         ###   ########.fr       */
+/*   Updated: 2024/03/26 15:51:43 by tguerran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
- 
+
 void	char_to_bin(unsigned char c, int pid)
 {
 	int	bit;

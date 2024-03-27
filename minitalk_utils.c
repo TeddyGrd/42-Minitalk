@@ -6,7 +6,7 @@
 /*   By: tguerran <tguerran@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 13:49:11 by tguerran          #+#    #+#             */
-/*   Updated: 2024/03/18 15:25:39 by tguerran         ###   ########.fr       */
+/*   Updated: 2024/03/26 15:53:06 by tguerran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,3 @@ int	ft_atoi(const char *nptr)
 	}
 	return (num * count);
 }
-
