@@ -6,68 +6,40 @@
 /*   By: tguerran <tguerran@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 15:16:45 by tguerran          #+#    #+#             */
-/*   Updated: 2024/03/26 16:36:58 by tguerran         ###   ########.fr       */
+/*   Updated: 2024/04/02 19:17:37 by tguerran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-void extended_action(char *c, int *received, int *client_pid, int *bit)
+void	extended_action(char *c, int *received, int *client_pid, int *bit)
 {
-	static char *phrase = NULL;
-    static int phrase_len = 0;
-    static int phrase_capacity = 0;
-	if (phrase == NULL)
-	{
-        phrase_capacity = 10; 
-        phrase = (char*)malloc(phrase_capacity * sizeof(char));
-        if (phrase == NULL)
-    		exit (1);
-        phrase_len = 0;
-    }
-    if (phrase_len + 1 >= phrase_capacity)
-	{
-        int new_capacity = phrase_capacity * 2;
-        char *new_phrase = (char*)malloc(new_capacity * sizeof(char));
-        if (new_phrase == NULL)
-            exit (1);
+	static char		str[MAX_BUFFER];
+	static int		str_len = 0;
 
-	int i;
-	i = 0;
-        while (i < phrase_len)
-		{
-            new_phrase[i] = phrase[i];
-			i++;
-        }
-        free(phrase);
-        phrase = new_phrase;
-        phrase_capacity = new_capacity;
-	}
-	phrase[phrase_len++] = *c;
-	// ft_printf("%c",*c);
-	if(*c == '\0')
+	if (*c == '\0')
 	{
-		ft_printf("%s \n",phrase);
-		free(phrase);
-        phrase = NULL;
-        phrase_len = 0;
-		ft_printf(" %d signal received from client PID; %d \n",*received, *client_pid);
+		str[str_len] = '\0';
+		ft_printf("%s\n", str);
+		ft_printf(" %d signal received from PID; %d\n", *received, *client_pid);
 		*received = 0;
 		*c = 0;
-		if (kill(*client_pid,SIGUSR1) == -1)
+		if (kill(*client_pid, SIGUSR1) == -1)
 			signal_error();
-		return;
+		str_len = 0;
+		return ;
 	}
+	str[str_len++] = *c;
 	*bit = 0;
 }
 
 static void	action(int sig, siginfo_t *info, void *context)
 {
-	static int client_pid;
-	static int	bit;
-	static char	c;
-	static int	received;
-	static	int	current_pid;
+	static int		client_pid;
+	static int		bit;
+	static char		c;
+	static int		received;
+	static int		current_pid;
 
 	(void)context;
 	if (!client_pid)
@@ -85,10 +57,11 @@ static void	action(int sig, siginfo_t *info, void *context)
 	bit++;
 	if (bit == 8)
 		extended_action(&c, &received, &client_pid, &bit);
-	c <<=1;
+	c <<= 1 ;
 	usleep(100);
-	kill(client_pid,SIGUSR2);
+	kill(client_pid, SIGUSR2);
 }
+
 int	main(void)
 {
 	int					pid;
