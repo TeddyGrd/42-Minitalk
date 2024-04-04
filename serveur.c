@@ -6,30 +6,68 @@
 /*   By: tguerran <tguerran@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 15:16:45 by tguerran          #+#    #+#             */
-/*   Updated: 2024/04/02 19:17:37 by tguerran         ###   ########.fr       */
+/*   Updated: 2024/04/04 01:45:26 by tguerran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
+#include <string.h>
+
+void	allocate_memory(char **phrase, int *phrase_capacity)
+{
+	if (*phrase == NULL)
+	{
+		*phrase_capacity = 10;
+		*phrase = (char *)malloc(*phrase_capacity * sizeof(char));
+		if (!(*phrase))
+			exit(1);
+	}
+}
+
+void	reallocate_memory(char **phrase, int *phrase_len, int *phrase_capacity)
+{
+	int		new_capacity;
+	int		i;
+	char	*new_phrase;
+
+	i = 0;
+	if (!(*phrase) || *phrase_len == 0 || *phrase_capacity == 0)
+		return ;
+	new_capacity = *phrase_capacity * 2;
+	new_phrase = (char *)malloc(new_capacity * sizeof(char));
+	if (!new_phrase)
+		exit(1);
+	while (i < *phrase_len)
+	{
+		new_phrase[i] = (*phrase)[i];
+		i++;
+	}
+	free(*phrase);
+	*phrase = new_phrase;
+	*phrase_capacity = new_capacity;
+}
 
 void	extended_action(char *c, int *received, int *client_pid, int *bit)
 {
-	static char		str[MAX_BUFFER];
-	static int		str_len = 0;
+	static char		*phrase = NULL;
+	static int		phrase_len = 0;
+	static int		phrase_capacity = 0;
 
+	allocate_memory(&phrase, &phrase_capacity);
+	if (phrase_len + 1 >= phrase_capacity)
+		reallocate_memory(&phrase, &phrase_len, &phrase_capacity);
+	phrase[phrase_len++] = *c;
 	if (*c == '\0')
 	{
-		str[str_len] = '\0';
-		ft_printf("%s\n", str);
-		ft_printf(" %d signal received from PID; %d\n", *received, *client_pid);
+		ft_printf("%s \n", phrase);
+		free(phrase);
+		phrase = NULL;
+		phrase_len = 0;
+		ft_printf("%d signal received from PID; %d \n", *received, *client_pid);
 		*received = 0;
 		*c = 0;
-		if (kill(*client_pid, SIGUSR1) == -1)
-			signal_error();
-		str_len = 0;
 		return ;
 	}
-	str[str_len++] = *c;
 	*bit = 0;
 }
 
