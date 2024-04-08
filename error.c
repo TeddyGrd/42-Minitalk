@@ -14,6 +14,6 @@
 
 void	signal_error(void)
 {
-	printf("unexpected error");
-	exit(EXIT_FAILURE);
+	ft_printf("unexpected error");
+	exit(1);
 }

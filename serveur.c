@@ -13,56 +13,56 @@
 #include "minitalk.h"
 #include <string.h>
 
-void	allocate_memory(char **phrase, int *phrase_capacity)
+void	allocate_memory(char **str, int *str_capacity)
 {
-	if (*phrase == NULL)
+	if (*str == NULL)
 	{
-		*phrase_capacity = 10;
-		*phrase = (char *)malloc(*phrase_capacity * sizeof(char));
-		if (!(*phrase))
+		*str_capacity = 10;
+		*str = (char *)malloc(*str_capacity * sizeof(char));
+		if (!(*str))
 			exit(1);
 	}
 }
 
-void	reallocate_memory(char **phrase, int *phrase_len, int *phrase_capacity)
+void	reallocate_memory(char **str, int *str_len, int *str_capacity)
 {
 	int		new_capacity;
 	int		i;
-	char	*new_phrase;
+	char	*new_str;
 
 	i = 0;
-	if (!(*phrase) || *phrase_len == 0 || *phrase_capacity == 0)
+	if (!(*str) || *str_len == 0 || *str_capacity == 0)
 		return ;
-	new_capacity = *phrase_capacity * 2;
-	new_phrase = (char *)malloc(new_capacity * sizeof(char));
-	if (!new_phrase)
+	new_capacity = *str_capacity * 2;
+	new_str = (char *)malloc(new_capacity * sizeof(char));
+	if (!new_str)
 		exit(1);
-	while (i < *phrase_len)
+	while (i < *str_len)
 	{
-		new_phrase[i] = (*phrase)[i];
+		new_str[i] = (*str)[i];
 		i++;
 	}
-	free(*phrase);
-	*phrase = new_phrase;
-	*phrase_capacity = new_capacity;
+	free(*str);
+	*str = new_str;
+	*str_capacity = new_capacity;
 }
 
 void	extended_action(char *c, int *received, int *client_pid, int *bit)
 {
-	static char		*phrase = NULL;
-	static int		phrase_len = 0;
-	static int		phrase_capacity = 0;
+	static char		*str = NULL;
+	static int		str_len = 0;
+	static int		str_capacity = 0;
 
-	allocate_memory(&phrase, &phrase_capacity);
-	if (phrase_len + 1 >= phrase_capacity)
-		reallocate_memory(&phrase, &phrase_len, &phrase_capacity);
-	phrase[phrase_len++] = *c;
+	allocate_memory(&str, &str_capacity);
+	if (str_len + 1 >= str_capacity)
+		reallocate_memory(&str, &str_len, &str_capacity);
+	str[str_len++] = *c;
 	if (*c == '\0')
 	{
-		ft_printf("%s \n", phrase);
-		free(phrase);
-		phrase = NULL;
-		phrase_len = 0;
+		ft_printf("%s \n", str);
+		free(str);
+		str = NULL;
+		str_len = 0;
 		ft_printf("%d signal received from PID; %d \n", *received, *client_pid);
 		*received = 0;
 		*c = 0;

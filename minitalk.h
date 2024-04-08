@@ -13,13 +13,10 @@
 #ifndef MINITALK_H
 # define MINITALK_H
 
-# include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <signal.h>
 # include "ft_printf/ft_printf.h"
-
-# define MAX_BUFFER 100
 
 int		ft_atoi(const char *nptr);
 void	signal_error(void);
