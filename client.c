@@ -6,7 +6,7 @@
 /*   By: tguerran <tguerran@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 15:16:48 by tguerran          #+#    #+#             */
-/*   Updated: 2024/03/26 15:51:43 by tguerran         ###   ########.fr       */
+/*   Updated: 2024/04/11 13:44:12 by tguerran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,20 +58,22 @@ void	received(int sig)
 		++sent;
 }
 
-int	main(int ac, char **av)
+int	main(int argc, char **argv)
 {
 	int	server_pid;
 	int	client_pid;
 
+	if (check_error(argv) == 1)
+		return (0);
 	client_pid = getpid();
-	if (ac == 3)
+	if (argc == 3)
 	{
 		ft_printf("client pid: %d\n", client_pid);
 		signal(SIGUSR1, received);
 		signal(SIGUSR2, received);
-		server_pid = ft_atoi(av[1]);
+		server_pid = ft_atoi(argv[1]);
 		ft_printf("Text currently sending..\n");
-		sent_text(av[2], server_pid);
+		sent_text(argv[2], server_pid);
 	}
 	else
 		ft_printf("usage: ./client <server_pid> <text to send>\n");
