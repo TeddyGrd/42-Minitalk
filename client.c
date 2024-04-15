@@ -6,7 +6,7 @@
 /*   By: tguerran <tguerran@student.42lehavre.fr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 15:16:48 by tguerran          #+#    #+#             */
-/*   Updated: 2024/04/11 13:44:12 by tguerran         ###   ########.fr       */
+/*   Updated: 2024/04/16 00:59:26 by tguerran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,6 @@ int	main(int argc, char **argv)
 		sent_text(argv[2], server_pid);
 	}
 	else
-		ft_printf("usage: ./client <server_pid> <text to send>\n");
+		ft_printf("./client <server pid> <text>\n");
 	return (0);
 }
